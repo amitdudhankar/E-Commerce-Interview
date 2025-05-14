@@ -1,3 +1,5 @@
+
+
 // import React, { useEffect, useState } from "react";
 // import { useParams } from "react-router-dom";
 // import ProductCard from "../components/ProductCards";
@@ -116,13 +118,13 @@ const ProductList = ({ searchQuery }) => {
   }, [searchQuery, products]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#f9fafc] to-[#ffffff] px-4 py-12 sm:px-6 lg:px-8">
       {categoryName && (
-        <h2 className="text-2xl font-semibold mb-4 capitalize">
+        <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-6 capitalize tracking-tight">
           Showing: {categoryName}
         </h2>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {filteredProducts.length ? (
           filteredProducts.map((product) => (
             <ProductCard
@@ -135,7 +137,7 @@ const ProductList = ({ searchQuery }) => {
             />
           ))
         ) : (
-          <p>No products found.</p>
+          <p className="text-center text-lg text-gray-500">No products found.</p>
         )}
       </div>
     </div>
