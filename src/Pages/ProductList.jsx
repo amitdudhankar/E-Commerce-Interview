@@ -10,46 +10,43 @@ const LoadingSpinner = () => (
 );
 
 const ProductList = ({ searchQuery }) => {
+  const { categoryName } = useParams();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [loading, setLoading] = useState(true); // Add loading state
-  const { categoryName } = useParams();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch the product list only once when component mounts
+    // Fetch products when component loads or category changes
     fetch("https://api.escuelajs.co/api/v1/products?offset=0&limit=50")
       .then((res) => res.json())
       .then((data) => {
-        let filteredData = data;
+        let filtered = data;
 
-        // Filter products by category if categoryName is present
         if (categoryName) {
-          filteredData = filteredData.filter(
+          filtered = filtered.filter(
             (product) =>
-              product.category?.name?.toLowerCase() ===
-              categoryName.toLowerCase()
+              product.category &&
+              product.category.name.toLowerCase() === categoryName.toLowerCase()
           );
         }
 
-        setProducts(filteredData);
-        setLoading(false); // Set loading to false once data is fetched
+        setProducts(filtered);
+        setLoading(false);
       })
-      .catch((err) => {
-        console.error("Error fetching products:", err);
-        setLoading(false); // In case of error, set loading to false
+      .catch(() => {
+        setProducts([]);
+        setLoading(false);
       });
   }, [categoryName]);
 
   useEffect(() => {
-    // Filter products based on the search query whenever it changes
     if (searchQuery) {
-      setFilteredProducts(
-        products.filter((product) =>
-          product.title.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+      const lowerSearch = searchQuery.toLowerCase();
+      const filtered = products.filter((product) =>
+        product.title.toLowerCase().includes(lowerSearch)
       );
+      setFilteredProducts(filtered);
     } else {
-      // If search query is empty, display all products
       setFilteredProducts(products);
     }
   }, [searchQuery, products]);
@@ -59,30 +56,36 @@ const ProductList = ({ searchQuery }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f9fafc] to-[#ffffff] px-4 py-12 sm:px-6 lg:px-8">
+    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #f9fafc, #ffffff)", padding: "48px 16px" }}>
       {categoryName && (
-        <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-6 capitalize tracking-tight">
+        <h2 style={{ textAlign: "center", fontSize: 28, fontWeight: "bold", marginBottom: 24, textTransform: "capitalize", color: "#1f2937" }}>
           Showing: {categoryName}
         </h2>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {filteredProducts.length ? (
-          filteredProducts.map((product) => (
+      {filteredProducts.length === 0 ? (
+        <p style={{ textAlign: "center", fontSize: 18, color: "#6b7280" }}>No products found.</p>
+      ) : (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))",
+            gap: 24,
+            maxWidth: 1200,
+            margin: "0 auto",
+          }}
+        >
+          {filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
               id={product.id}
               title={product.title}
               price={product.price}
-              category={product.category?.name}
-              image={product.images?.[0]}
+              category={product.category ? product.category.name : ""}
+              image={product.images && product.images[0]}
             />
-          ))
-        ) : (
-          <p className="text-center text-lg text-gray-500">
-            No products found.
-          </p>
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

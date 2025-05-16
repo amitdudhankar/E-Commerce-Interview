@@ -2,32 +2,34 @@ import React, { useState } from "react";
 import ProductList from "./ProductList";
 
 const Home = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [search, setSearch] = useState("");
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+  const onSearchChange = (e) => {
+    setSearch(e.target.value);
   };
 
   return (
-    <div className="min-h-screen px-4 sm:px-10 py-12 bg-gradient-to-b from-[#f9fafb] to-white">
-      <div className="max-w-3xl mx-auto text-center">
-        {/* Page Title */}
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 tracking-tight">
-          Discover Premium Products
+    <div className="min-h-screen bg-[#f5f5f5] px-4 py-10">
+      <div className="text-center mb-10">
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">
+          Welcome to Our Store
         </h1>
+        <p className="text-gray-600">Find the products you love</p>
 
-        {/* Search Input */}
-        <div className="relative w-full sm:w-[400px] mx-auto">
+        {/* Search Box */}
+        <div className="mt-6 max-w-md mx-auto">
           <input
             type="text"
-            placeholder="Search for luxury, quality, and style..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            className="w-full bg-white/60 backdrop-blur border border-gray-200 rounded-full px-6 py-3 text-gray-800 shadow-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+            placeholder="Search products..."
+            value={search}
+            onChange={onSearchChange}
+            className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
-      <ProductList searchQuery={searchQuery} />
+
+      {/* Product List */}
+      <ProductList searchQuery={search} />
     </div>
   );
 };

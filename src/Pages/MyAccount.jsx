@@ -4,60 +4,37 @@ const MyAccount = () => {
   const user = {
     name: "Amit Dudhankar",
     email: "akdudhankar11@gmail.com",
-    joinedDate: "May 14, 2025",
-    address: "Pune, Maharashtra, India",
     phone: "+91-8329005933",
+    address: "Pune, Maharashtra, India",
+    joined: "May 14, 2025",
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f9fafc] to-[#ffffff] px-4 py-12 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        {/* Title */}
-        <h1 className="text-center text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-10 tracking-tight">
+    <div style={{ padding: "40px 20px", backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
+      <div style={{ maxWidth: "600px", margin: "0 auto" }}>
+        <h1 style={{ textAlign: "center", fontSize: "28px", marginBottom: "30px" }}>
           My Account
         </h1>
 
-        {/* Account Card */}
-        <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-2xl shadow-xl p-6 sm:p-8 transition hover:shadow-2xl">
-          {/* User Info */}
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-6 text-center sm:text-left">
+        <div style={{ background: "#fff", borderRadius: "10px", padding: "20px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}>
+          {/* Profile Picture and Name */}
+          <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
             <img
               src="/assets/Amit Photo.jpg"
-              alt={user.name}
-              className="w-24 h-24 rounded-full object-cover shadow-md border-2 border-white"
+              alt="User"
+              style={{ width: "80px", height: "80px", borderRadius: "50%", marginRight: "20px", objectFit: "cover" }}
             />
             <div>
-              <h2 className="text-xl sm:text-2xl font-semibold text-gray-800">
-                {user.name}
-              </h2>
-              <p className="text-gray-500 text-sm sm:text-base">{user.email}</p>
+              <h2 style={{ fontSize: "20px", margin: "0" }}>{user.name}</h2>
+              <p style={{ color: "#555" }}>{user.email}</p>
             </div>
           </div>
 
-          {/* Details */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-gray-700">
-            <div>
-              <p className="text-xs sm:text-sm font-medium text-gray-500 uppercase">
-                Phone
-              </p>
-              <p className="text-base sm:text-lg font-semibold">{user.phone}</p>
-            </div>
-            <div>
-              <p className="text-xs sm:text-sm font-medium text-gray-500 uppercase">
-                Address
-              </p>
-              <p className="text-base sm:text-lg font-semibold">
-                {user.address}
-              </p>
-            </div>
-            <div className="sm:col-span-2">
-              <p className="text-xs sm:text-sm font-medium text-gray-500 uppercase">
-                Joined
-              </p>
-              <p className="text-base sm:text-lg font-semibold">
-                {user.joinedDate}
-              </p>
-            </div>
+          {/* User Info */}
+          <div style={{ lineHeight: "1.8" }}>
+            <p><strong>Phone:</strong> {user.phone}</p>
+            <p><strong>Address:</strong> {user.address}</p>
+            <p><strong>Joined:</strong> {user.joined}</p>
           </div>
         </div>
       </div>

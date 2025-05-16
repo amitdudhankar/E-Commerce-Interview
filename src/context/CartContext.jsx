@@ -1,62 +1,80 @@
 import React, { createContext, useContext, useState } from "react";
 
+// Creating a context for the cart
 const CartContext = createContext();
 
-export const useCart = () => useContext(CartContext);
+// Hook to use the cart context
+export const useCart = () => {
+  return useContext(CartContext);
+};
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
 
-  // Add product to cart, if it already exists, increase its quantity
+  // Function to add item to cart
   const addToCart = (product) => {
-    setCartItems((prev) => {
-      const existingItem = prev.find((item) => item.id === product.id);
-      if (existingItem) {
-        return prev.map((item) =>
+    setCartItems((prevCart) => {
+      const itemFound = prevCart.find((item) => item.id === product.id);
+
+      if (itemFound) {
+        // If item is already in cart, increase quantity
+        return prevCart.map((item) =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
+      } else {
+        // If item is not in cart, add it with quantity 1
+        return [...prevCart, { ...product, quantity: 1 }];
       }
-      return [...prev, { ...product, quantity: 1 }];
     });
   };
 
-  // Remove product from cart by its id
-  const removeFromCart = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  // Function to remove item from cart
+  const removeFromCart = (productId) => {
+    setCartItems((prevCart) => {
+      return prevCart.filter((item) => item.id !== productId);
+    });
   };
 
-  // Increase the quantity of a product in the cart
+  // Function to increase quantity
   const increaseQuantity = (id) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
+    setCartItems((cart) =>
+      cart.map((item) => {
+        if (item.id === id) {
+          return { ...item, quantity: item.quantity + 1 };
+        } else {
+          return item;
+        }
+      })
     );
   };
 
-  // Decrease the quantity of a product in the cart, but don't go below 1
+  // Function to decrease quantity but keep it minimum 1
   const decreaseQuantity = (id) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
+    setCartItems((cart) =>
+      cart.map((item) => {
+        if (item.id === id && item.quantity > 1) {
+          return { ...item, quantity: item.quantity - 1 };
+        } else {
+          return item;
+        }
+      })
     );
   };
 
+  // Clear the cart
   const clearCart = () => {
-    setCartItems([]);
+    setCartItems([]); // maybe confirm with user later
   };
 
-  // Calculate the total price of all items in the cart
+  // Get total price of all items
   const getTotalPrice = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
+    let total = 0;
+    cartItems.forEach((item) => {
+      total += item.price * item.quantity;
+    });
+    return total;
   };
 
   return (
@@ -67,8 +85,8 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         increaseQuantity,
         decreaseQuantity,
-        getTotalPrice,
         clearCart,
+        getTotalPrice,
       }}
     >
       {children}

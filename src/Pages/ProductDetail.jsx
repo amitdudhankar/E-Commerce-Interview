@@ -1,77 +1,100 @@
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useCart } from "../context/CartContext"; // 👈 import
-import { useEffect, useState } from "react";
+import { useCart } from "../context/CartContext";
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const [product, setProduct] = useState(undefined);
-  const { addToCart } = useCart(); // 👈 use cart context
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  const { addToCart } = useCart();
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const res = await fetch(
-          `https://api.escuelajs.co/api/v1/products/${id}`
-        );
-        if (!res.ok) throw new Error("Product not found");
-        const data = await res.json();
+    // Simple fetch without async/await (using .then)
+    fetch(`https://api.escuelajs.co/api/v1/products/${id}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch");
+        }
+        return res.json();
+      })
+      .then((data) => {
         setProduct(data);
-      } catch (err) {
-        console.error("Error fetching product:", err);
-        setProduct(null);
-      }
-    };
-
-    fetchProduct();
+        setLoading(false);
+      })
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
   }, [id]);
 
-  if (product === null)
-    return <p className="text-center mt-10 text-red-500">Product not found.</p>;
-  if (!product || !product.images)
-    return <p className="text-center mt-10">Loading...</p>;
+  if (loading) {
+    return (
+      <p style={{ textAlign: "center", marginTop: 40 }}>Loading product...</p>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <p style={{ textAlign: "center", marginTop: 40, color: "red" }}>
+        Product not found.
+      </p>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f9fafc] to-[#ffffff] px-4 py-12 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Image Section */}
-          <div className="space-y-6">
-            {product.images.map((img, i) => (
+    <div style={{ maxWidth: 900, margin: "40px auto", padding: "0 20px" }}>
+      <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+        {/* Images */}
+        <div style={{ flex: "1 1 40%" }}>
+          {product.images && product.images.length > 0 ? (
+            product.images.map((img, index) => (
               <img
-                key={i}
+                key={index}
                 src={img}
-                alt={`Product ${i}`}
-                className="w-full h-[350px] sm:h-[450px] md:h-[550px] object-cover rounded-xl shadow-lg transition-transform transform hover:scale-105"
+                alt={`Product image ${index + 1}`}
+                style={{ width: "100%", marginBottom: 10, borderRadius: 8 }}
               />
-            ))}
-          </div>
+            ))
+          ) : (
+            <p>No images available</p>
+          )}
+        </div>
 
-          {/* Product Details Section */}
-          <div className="flex flex-col space-y-6">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 tracking-tight">
-              {product.title}
-            </h1>
-            <p className="text-lg text-gray-600 mb-4">{product.description}</p>
-            <p className="text-2xl font-semibold text-blue-600 mb-4">
-              ${product.price}
-            </p>
-            <p className="text-sm text-gray-500">
-              Category:{" "}
-              <span className="font-medium text-blue-600">
-                {product.category?.name}
-              </span>
-            </p>
-
-            {/* Add to Cart Button */}
-            <div className="flex gap-4">
-              <button
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg shadow-xl hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105"
-                onClick={() => addToCart(product)}
-              >
-                Add to Cart
-              </button>
-            </div>
-          </div>
+        {/* Details */}
+        <div style={{ flex: "1 1 50%" }}>
+          <h1 style={{ fontSize: 28, marginBottom: 10 }}>{product.title}</h1>
+          <p style={{ marginBottom: 20 }}>{product.description}</p>
+          <p
+            style={{
+              fontSize: 22,
+              fontWeight: "bold",
+              color: "#2563eb",
+              marginBottom: 10,
+            }}
+          >
+            ${product.price}
+          </p>
+          <p style={{ marginBottom: 20 }}>
+            Category:{" "}
+            <strong style={{ color: "#2563eb" }}>
+              {product.category ? product.category.name : "Unknown"}
+            </strong>
+          </p>
+          <button
+            onClick={() => addToCart(product)}
+            style={{
+              backgroundColor: "#2563eb",
+              color: "white",
+              padding: "12px 24px",
+              border: "none",
+              borderRadius: 6,
+              cursor: "pointer",
+            }}
+          >
+            Add to Cart
+          </button>
         </div>
       </div>
     </div>

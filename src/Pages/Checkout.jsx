@@ -7,8 +7,8 @@ const Checkout = () => {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const navigate = useNavigate();
 
-  const handlePlaceOrder = () => {
-    const existingOrders = JSON.parse(localStorage.getItem("orders")) || [];
+  const placeOrder = () => {
+    const oldOrders = JSON.parse(localStorage.getItem("orders")) || [];
 
     const newOrder = {
       id: Date.now(),
@@ -17,7 +17,9 @@ const Checkout = () => {
       date: new Date().toLocaleString(),
     };
 
-    localStorage.setItem("orders", JSON.stringify([newOrder, ...existingOrders]));
+    const updatedOrders = [newOrder, ...oldOrders];
+    localStorage.setItem("orders", JSON.stringify(updatedOrders));
+
     setOrderPlaced(true);
 
     setTimeout(() => {
@@ -29,66 +31,65 @@ const Checkout = () => {
   if (cartItems.length === 0 && !orderPlaced) {
     return (
       <div className="text-center py-20">
-        <p className="text-gray-500 text-lg">Your cart is empty.</p>
+        <p className="text-gray-600 text-lg">No items in your cart.</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12 bg-[#f9fafb] min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-900 mb-10 tracking-tight">Checkout</h1>
+    <div className="max-w-4xl mx-auto px-4 py-10 bg-[#f1f1f1] min-h-screen">
+      <h1 className="text-2xl font-bold mb-8 text-gray-800">Checkout</h1>
 
       {orderPlaced ? (
-        <div className="text-center text-green-600 text-xl font-semibold">
-          Your order has been placed!
+        <div className="text-green-600 text-lg font-semibold text-center">
+          Order placed successfully!
         </div>
       ) : (
         <>
           {/* Order Summary */}
-          <div className="bg-white p-6 rounded-3xl shadow-md border border-gray-200 mb-8">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Order Summary</h2>
-            <ul className="divide-y divide-gray-100">
-              {cartItems.map((item) => (
-                <li key={item.id} className="flex justify-between py-2 text-gray-700">
-                  <span>
-                    {item.title} × {item.quantity}
-                  </span>
-                  <span>${(item.price * item.quantity).toFixed(2)}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-6 text-right text-xl font-bold text-gray-900">
-              Total: <span className="text-blue-600">${getTotalPrice().toFixed(2)}</span>
-            </p>
+          <div className="bg-white p-5 rounded-xl border mb-6">
+            <h2 className="text-lg font-semibold mb-4 text-gray-800">Order Summary</h2>
+            {cartItems.map((item) => (
+              <div
+                key={item.id}
+                className="flex justify-between py-2 border-b text-gray-700"
+              >
+                <span>
+                  {item.title} × {item.quantity}
+                </span>
+                <span>${(item.price * item.quantity).toFixed(2)}</span>
+              </div>
+            ))}
+            <div className="mt-4 text-right font-bold text-gray-900">
+              Total: ${getTotalPrice().toFixed(2)}
+            </div>
           </div>
 
           {/* Billing Info */}
-          <div className="bg-white p-6 rounded-3xl shadow-md border border-gray-200 mb-10">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Billing Information</h2>
-            <div className="grid gap-4">
-              <input
-                type="text"
-                placeholder="Full Name"
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
-              />
-              <input
-                type="email"
-                placeholder="Email Address"
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
-              />
-              <input
-                type="text"
-                placeholder="Shipping Address"
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
-              />
-            </div>
+          <div className="bg-white p-5 rounded-xl border mb-6">
+            <h2 className="text-lg font-semibold mb-4 text-gray-800">Billing Info</h2>
+            <input
+              type="text"
+              placeholder="Full Name"
+              className="w-full mb-3 px-3 py-2 border rounded"
+            />
+            <input
+              type="email"
+              placeholder="Email Address"
+              className="w-full mb-3 px-3 py-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Shipping Address"
+              className="w-full mb-3 px-3 py-2 border rounded"
+            />
           </div>
 
           {/* Place Order Button */}
           <div className="text-right">
             <button
-              onClick={handlePlaceOrder}
-              className="bg-black hover:bg-gray-900 text-white px-8 py-3 rounded-full text-lg font-medium shadow-lg transition duration-300"
+              onClick={placeOrder}
+              className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800"
             >
               Place Order
             </button>
